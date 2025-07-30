@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <title>ROSA REUS</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/addons/p5.sound.min.js"></script>
+    <meta charset="utf-8" />
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        background-color: #000000;
+        overflow: hidden;
+      }
+
+      main {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: center center;
+        transform: translate(-50%, -50%) scale(1);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 0.2;
+        width: 50vmin; /* Responsiu */
+        height: auto;
+        pointer-events: none;
+      }
+
+      a {
+        position: absolute;
+        bottom: 10%;
+        left: 5%;
+        color: white;
+        font-size: 6vmin;
+        font-weight: bold;
+        display: flex;
+        font-family: monospace;
+        line-height: 1.2;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="container"></main>
+
+    <script>
+      const colors = [
+        "#FF0000", "#00FF00", "#0000FF",
+        "#FFFF00", "#FF00FF", "#00FFFF",
+        "#FFA500", "#00FF7F"
+      ];
+      let currentColorIndex = 0;
+      let nextColorIndex = 1;
+      const transitionTime = 2000;
+      let transitionStartTime;
+
+      const NUM_COPIES = 20;
+      const container = document.getElementById('container');
+      let svgPaths = [];
+
+      // Nou path substituint l'antic
+      const pathD = "M72.95 29.47C72.43 29.47 71.93 29.52 71.44 29.62C74.06 28.43 75.82 25.83 75.82 22.78C75.82 18.91 72.44 16.41 69.18 15.28C68.53 15.05 67.58 14.62 67.58 14.62C62.82 12.26 58.68 9.1 55.17 5.13L54.28 3.98C53.38 2.57 52 1.44 50.28 0.890001C46.34 -0.389999 42.11 1.77 40.84 5.7C40.67 6.23 40.56 6.75 40.51 7.28C40.22 4.39 38.31 1.87 35.37 0.910001C32.46 -0.0399989 29.64 0.640001 27.43 2.96L27.1 3.33C22.58 9.05 16.53 13.49 9.56999 16.05L8.56999 16.54C7.64999 17.1 7.15999 17.57 6.55999 18.41C4.16999 21.8 4.87 26.45 8.22 28.88C8.63 29.17 9.05 29.42 9.49 29.63C6.71 29.1 3.74999 30.17 1.96999 32.6C-0.0500051 35.4 0.0999948 39.09 2.11999 41.67L2.36999 42.11C5.54999 47.19 7.39999 52.3 8.20999 59.37L8.28999 60.2C8.30999 62.34 8.47 63.93 9.66 65.55C12.09 68.9 16.78 69.65 20.13 67.22L21.21 66.25C19.87 68.73 19.97 71.87 21.74 74.3C23.6 76.85 26.75 77.91 29.64 77.2L29.92 77.16C33.29 76.24 36.85 75.76 40.5 75.76C43.61 75.76 46.64 76.11 49.55 76.78L51.16 77.27C52.57 77.67 54.11 77.67 55.59 77.2C59.52 75.92 61.68 71.69 60.4 67.75C60.25 67.29 60.02 66.8 59.79 66.38C61.72 68.45 64.76 69.35 67.65 68.42C71.23 67.25 73.08 63.31 72.78 60.07C72.72 59.48 72.75 59.14 72.76 58.54C72.85 53.55 75.53 47 78.58 42.14L78.9 41.56C79.89 40.29 80.48 38.7 80.48 36.95C80.48 32.81 77.13 29.47 72.99 29.47H72.95ZM67.99 30.73C67.02 31.5 65.93 32.11 64.9 32.8C62.83 34.18 60.66 35.38 58.37 36.4C57.22 36.91 56.13 37.52 54.93 37.93C54.93 37.97 54.93 38.01 54.93 38.05C55.01 38.69 55.06 39.33 55.06 39.97C55.06 43.47 53.79 46.65 51.74 49.15C51.6 49.32 51.49 49.51 51.35 49.67C52.77 51.74 54.03 53.93 55.09 56.22C56.16 58.51 57.03 60.91 57.7 63.39C53.47 60.64 49.51 57.25 46.41 53.25C45.51 53.65 44.56 53.96 43.57 54.18C42.59 54.39 41.56 54.5 40.52 54.5C39.2 54.5 37.95 54.28 36.73 53.95C35.84 53.71 34.96 53.43 34.14 53.02C31.09 57.01 27.4 60.45 23.19 63.2C24.52 58.19 26.61 53.54 29.46 49.39C27.29 46.85 25.98 43.56 25.98 39.95C25.98 39.55 26.02 39.14 26.05 38.74C26.07 38.54 26.06 38.33 26.09 38.14C23.66 37.3 21.34 36.22 19.13 34.95C16.92 33.69 14.83 32.23 12.87 30.65C13.24 30.64 13.65 30.57 14.04 30.5C14.24 30.47 14.44 30.43 14.63 30.43C16.97 30.43 19.27 30.61 21.51 30.95C23.75 31.29 25.94 31.81 28.05 32.47C29.07 30.77 30.43 29.3 32.04 28.15C33.64 27 35.49 26.16 37.49 25.74C37.5 24.43 37.76 23.17 37.91 21.88C38.19 19.3 38.67 16.81 39.36 14.38C39.71 13.17 39.97 11.9 40.4 10.74C40.83 11.91 41.11 13.16 41.48 14.38C42.21 16.8 42.7 19.3 43.02 21.87C43.18 23.16 43.46 24.41 43.48 25.72C43.99 25.82 44.46 26.03 44.94 26.19C47.87 27.13 50.37 28.96 52.16 31.39C52.46 31.79 52.8 32.17 53.05 32.6C57.24 31.28 61.7 30.58 66.32 30.58C66.92 30.58 67.38 30.68 67.97 30.7L67.99 30.73Z";
+
+      for(let i = 0; i < NUM_COPIES; i++) {
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", "0 0 81 78");  // Nou viewBox
+
+        const scale = 1.5 - (i / (NUM_COPIES - 1)) * 1.4;
+        svg.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathD);
+        path.setAttribute("stroke", colors[0]);
+        path.setAttribute("fill", "none");
+
+        svg.appendChild(path);
+        container.appendChild(svg);
+        svgPaths.push(path);
+      }
+
+      transitionStartTime = performance.now();
+
+      function lerpColor(c1, c2, t) {
+        return {
+          r: c1.r + (c2.r - c1.r) * t,
+          g: c1.g + (c2.g - c1.g) * t,
+          b: c1.b + (c2.b - c1.b) * t
+        };
+      }
+
+      function hexToRgb(hex) {
+        hex = hex.replace(/^#/, '');
+        return {
+          r: parseInt(hex.substring(0, 2), 16),
+          g: parseInt(hex.substring(2, 4), 16),
+          b: parseInt(hex.substring(4, 6), 16),
+        };
+      }
+
+      function rgbToHex(rgb) {
+        const toHex = c => {
+          let hex = Math.round(c).toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        };
+        return "#" + toHex(rgb.r) + toHex(rgb.g) + toHex(rgb.b);
+      }
+
+      const amplitude = 0.1;
+      const waveSpeed = 0.005;
+      const waveLength = NUM_COPIES;
+
+      function animate() {
+        const now = performance.now();
+        let progress = (now - transitionStartTime) / transitionTime;
+        if (progress >= 1) {
+          currentColorIndex = nextColorIndex;
+          nextColorIndex = (nextColorIndex + 1) % colors.length;
+          transitionStartTime = now;
+          progress = 0;
+        }
+
+        const c1 = hexToRgb(colors[currentColorIndex]);
+        const c2 = hexToRgb(colors[nextColorIndex]);
+        const c = lerpColor(c1, c2, progress);
+        const hexColor = rgbToHex(c);
+
+        svgPaths.forEach((path, i) => {
+          path.setAttribute("stroke", hexColor);
+
+          const baseScale = 1.5 - (i / (NUM_COPIES - 1)) * 1.4;
+          const wave = amplitude * Math.sin(waveSpeed * now + (i / waveLength) * Math.PI * 2);
+          const newScale = baseScale * (1 + wave);
+
+          path.parentNode.style.transform = `translate(-50%, -50%) scale(${newScale})`;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>
